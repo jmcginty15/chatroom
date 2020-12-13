@@ -101,6 +101,18 @@ class ChatUser {
     this.send(JSON.stringify(data));
   }
 
+  /** handle a name change: broadcast to room */
+
+  handleNameChange(text) {
+    const newName = text.slice(6);
+    const oldName = this.name;
+    this.name = newName;
+    this.room.broadcast({
+      type: 'note',
+      text: `${oldName} changed name to ${newName}.`
+    });
+}
+
   /** Handle messages from client:
    *
    * - {type: "join", name: username} : join
@@ -115,6 +127,7 @@ class ChatUser {
     else if (msg.type === 'joke') this.handleJoke();
     else if (msg.type === 'members') this.handleMembers();
     else if (msg.type === 'priv') this.handlePrivate(msg.text);
+    else if (msg.type === 'name') this.handleNameChange(msg.text);
     else throw new Error(`bad message: ${msg.type}`);
   }
 

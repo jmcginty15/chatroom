@@ -70,6 +70,8 @@ $('form').submit(function (evt) {
     data.text = '';
   } else if (data.text.slice(0, 5) === '/priv') {
     data.type = 'priv';
+  } else if (data.text.slice(0, 5) === '/name') {
+    data.type = 'name';
   }
   ws.send(JSON.stringify(data));
 
