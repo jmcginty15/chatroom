@@ -81,6 +81,26 @@ class ChatUser {
     }));
   }
 
+  /** handle a private message: send only to the sender and recipient */
+
+  handlePrivate(text) {
+    text = text.slice(6);
+    const sender = this.name;
+    const recipient = text.slice(0, text.indexOf(' '));
+    const message = text.slice(text.indexOf(' '));
+    const data = {
+      name: `${sender} (private)`,
+      type: 'chat',
+      text: message
+    }
+    for (let member of this.room.members) {
+      if (member.name === recipient) {
+        member.send(JSON.stringify(data));
+      }
+    }
+    this.send(JSON.stringify(data));
+  }
+
   /** Handle messages from client:
    *
    * - {type: "join", name: username} : join
@@ -94,6 +114,7 @@ class ChatUser {
     else if (msg.type === 'chat') this.handleChat(msg.text);
     else if (msg.type === 'joke') this.handleJoke();
     else if (msg.type === 'members') this.handleMembers();
+    else if (msg.type === 'priv') this.handlePrivate(msg.text);
     else throw new Error(`bad message: ${msg.type}`);
   }
 
